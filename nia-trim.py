@@ -24,13 +24,13 @@ def get_filelen(file):
 
 for file in os.listdir('.'):
     if os.path.splitext(file)[1][1:] == 'wav':
+        command = False
         if len(sys.argv) != 2:
-            os.system(f'ffmpeg -v quiet -ss 0 -i {file} -t {filelen} -af afade=in:st=0:d=0.1,afade=out:st={filelen - 0.1}:d=0.1 -c:a pcm_s24le  trim/{file} ')
-            print(f'{file} trimed')
+            command = f'ffmpeg -v quiet -ss 0 -i {file} -t {filelen} -af afade=in:st=0:d=0.1,afade=out:st={filelen - 0.1}:d=0.1 -c:a pcm_s24le  trim/{file} '
         else:
-            start = get_filelen(file) - filelen
-            os.system(f'ffmpeg -v quiet -ss {start} -i {file} -t {filelen} -af afade=in:st=0:d=0.1,afade=out:st={filelen - 0.1}:d=0.1 -c:a pcm_s24le  trim/{file} ')
-            print(f'{file} trimed')
+            command = f'ffmpeg -v quiet -ss {get_filelen(file) - filelen} -i {file} -t {filelen} -af afade=in:st=0:d=0.1,afade=out:st={filelen - 0.1}:d=0.1 -c:a pcm_s24le  trim/{file} '
+        os.system(command)
+        print(f'{file} trim')
         os.remove(file)
         os.rename(f'trim/{file}', file)
 
